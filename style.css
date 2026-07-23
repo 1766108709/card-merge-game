@@ -327,15 +327,15 @@ button:focus-visible {
 .tile {
   position: absolute;
   display: grid;
-  width: 14%;
-  aspect-ratio: 1;
+  width: 12.4%;
+  aspect-ratio: 5 / 7;
   padding: 0;
   place-items: center;
   background:
     radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.95), transparent 32%),
-    linear-gradient(145deg, #fffdf7, #f5efdc);
+    linear-gradient(145deg, #fffefa, #f5efdf);
   border: 1px solid rgba(86, 105, 66, 0.16);
-  border-radius: 17%;
+  border-radius: 10%;
   box-shadow:
     0 4px 0 #d8d2bd,
     0 8px 14px rgba(65, 83, 54, 0.16);
@@ -352,42 +352,167 @@ button:focus-visible {
 
 .tile::before {
   position: absolute;
-  inset: 7%;
+  inset: 4%;
   content: "";
-  border: 1px solid rgba(120, 138, 95, 0.08);
-  border-radius: 14%;
+  border: 1px solid rgba(120, 138, 95, 0.12);
+  border-radius: 7%;
   pointer-events: none;
 }
 
-.tile .card-rank {
-  color: #29352b;
+.playing-card-face {
+  position: absolute;
+  inset: 0;
+  color: #27322b;
+  pointer-events: none;
+}
+
+.playing-card-face.is-red {
+  color: #b54e45;
+}
+
+.card-corner {
+  position: absolute;
+  left: 9%;
+  display: grid;
+  justify-items: center;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(25px, 8vw, 41px);
+  font-style: normal;
+  font-weight: 900;
+  line-height: 0.78;
+}
+
+.card-corner-top {
+  top: 8%;
+}
+
+.card-corner-bottom {
+  right: 9%;
+  bottom: 8%;
+  left: auto;
+  transform: rotate(180deg);
+}
+
+.card-corner b {
+  font-size: clamp(8px, 2.2vw, 12px);
+  letter-spacing: -0.08em;
+}
+
+.card-corner i {
+  margin-top: 2px;
+  font-size: clamp(7px, 1.9vw, 10px);
+  font-style: normal;
+}
+
+.card-center {
+  position: absolute;
+  inset: 19% 13%;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  line-height: 1;
+}
+
+.card-rank {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(20px, 5.8vw, 32px);
   font-weight: 900;
   letter-spacing: -0.05em;
-  line-height: 1;
   pointer-events: none;
-  transform: translateY(-1px);
   user-select: none;
 }
 
-.tile .card-rank.is-face {
-  color: #b2673d;
-  font-size: clamp(23px, 7vw, 36px);
+.card-rank.is-face {
+  font-size: clamp(19px, 5.4vw, 30px);
 }
 
-.tile .card-rank.is-joker {
-  max-width: 90%;
-  color: #ba594d;
-  font-size: clamp(12px, 3.6vw, 20px);
-  letter-spacing: 0.02em;
+.card-suit {
+  margin-top: -1px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(12px, 3.5vw, 19px);
+  font-style: normal;
 }
 
-.tile[data-rank="A"] .card-rank,
-.tile[data-rank="5"] .card-rank,
-.tile[data-rank="9"] .card-rank,
-.tile[data-rank="K"] .card-rank {
-  color: var(--green-dark);
+.is-joker-card {
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  color: #b34f46;
+}
+
+.is-joker-card.is-small-joker {
+  color: #31523a;
+}
+
+.joker-word {
+  position: absolute;
+  top: 8%;
+  left: 10%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(5px, 1.35vw, 8px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+}
+
+.joker-emblem {
+  position: absolute;
+  color: currentColor;
+  font-size: clamp(22px, 6vw, 34px);
+  opacity: 0.18;
+  transform: rotate(18deg);
+}
+
+.is-joker-card .card-rank {
+  z-index: 1;
+  max-width: 76%;
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: clamp(10px, 2.9vw, 16px);
+  letter-spacing: 0.08em;
+}
+
+.playing-card-back {
+  position: absolute;
+  inset: 5%;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  background-color: #426c4a;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 247, 215, 0.13) 0 1px, transparent 1px 6px),
+    repeating-linear-gradient(-45deg, rgba(255, 247, 215, 0.11) 0 1px, transparent 1px 6px);
+  border: 2px solid #f3e7c9;
+  border-radius: 7%;
+  box-shadow:
+    inset 0 0 0 2px #426c4a,
+    inset 0 0 0 3px rgba(255, 247, 215, 0.62);
+  pointer-events: none;
+}
+
+.playing-card-back::before,
+.playing-card-back::after {
+  position: absolute;
+  width: 58%;
+  aspect-ratio: 1;
+  content: "";
+  border: 1px solid rgba(255, 247, 215, 0.35);
+  transform: rotate(45deg);
+}
+
+.playing-card-back::after {
+  width: 36%;
+}
+
+.card-back-medallion {
+  z-index: 1;
+  display: grid;
+  width: 33%;
+  aspect-ratio: 1;
+  place-items: center;
+  color: #f5e8c7;
+  font-size: clamp(8px, 2.2vw, 13px);
+  background: #426c4a;
+  border: 1px solid rgba(255, 247, 215, 0.65);
+  border-radius: 50%;
 }
 
 .tile:not(.is-blocked):active {
@@ -417,15 +542,11 @@ button:focus-visible {
 
 .tile.is-blocked {
   cursor: not-allowed;
-  filter: brightness(0.7) saturate(0.65);
+  background: linear-gradient(145deg, #f7f0df, #dcd4bf);
 }
 
 .tile.is-blocked::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  background: rgba(68, 87, 58, 0.2);
-  border-radius: inherit;
+  display: none;
 }
 
 .tile.is-removing {
@@ -602,28 +723,37 @@ button:focus-visible {
 }
 
 .mini-tile {
+  position: relative;
   display: grid;
-  width: 37px;
-  height: 37px;
+  width: 31px;
+  aspect-ratio: 5 / 7;
   padding: 0;
   place-items: center;
-  font-size: 22px;
   background: var(--paper);
   border: 1px solid rgba(86, 105, 66, 0.16);
-  border-radius: 9px;
+  border-radius: 6px;
   box-shadow: 0 3px 0 #ddd7c6;
   cursor: pointer;
 }
 
-.mini-tile .card-rank {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 19px;
-  font-weight: 900;
+.mini-tile .card-corner {
+  display: none;
 }
 
-.mini-tile .card-rank.is-joker {
-  color: #ba594d;
+.mini-tile .card-rank {
+  font-size: 16px;
+}
+
+.mini-tile .card-suit {
+  font-size: 10px;
+}
+
+.mini-tile .is-joker-card .card-rank {
   font-size: 8px;
+}
+
+.mini-tile .joker-word {
+  display: none;
 }
 
 .tray-section {
@@ -658,11 +788,11 @@ button:focus-visible {
 .tray-slot {
   position: relative;
   display: grid;
-  aspect-ratio: 1;
+  aspect-ratio: 5 / 7;
   place-items: center;
   background: rgba(255, 255, 255, 0.27);
   border: 1px dashed rgba(69, 94, 57, 0.17);
-  border-radius: 12px;
+  border-radius: 9px;
 }
 
 .tray-tile {
@@ -670,32 +800,34 @@ button:focus-visible {
   inset: 1px;
   display: grid;
   place-items: center;
-  font-size: clamp(24px, 7vw, 35px);
   line-height: 1;
   background:
     radial-gradient(circle at 28% 20%, #fff, transparent 35%),
     linear-gradient(145deg, #fffdf7, #eee8d4);
   border: 1px solid rgba(86, 105, 66, 0.15);
-  border-radius: 11px;
+  border-radius: 8px;
   box-shadow: 0 3px 0 #d5cfbd;
   animation: trayDrop 250ms cubic-bezier(0.1, 0.8, 0.3, 1.3) both;
 }
 
+.tray-tile .card-corner {
+  display: none;
+}
+
 .tray-tile .card-rank {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(23px, 7vw, 36px);
-  font-weight: 900;
-  letter-spacing: -0.05em;
+  font-size: clamp(17px, 5.2vw, 28px);
 }
 
-.tray-tile .card-rank.is-face {
-  color: #b2673d;
+.tray-tile .card-suit {
+  font-size: clamp(10px, 3vw, 16px);
 }
 
-.tray-tile .card-rank.is-joker {
-  color: #ba594d;
-  font-size: clamp(9px, 2.7vw, 14px);
-  letter-spacing: 0;
+.tray-tile .is-joker-card .card-rank {
+  font-size: clamp(8px, 2.3vw, 12px);
+}
+
+.tray-tile .joker-word {
+  display: none;
 }
 
 .tray-tile.is-matching {

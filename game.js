@@ -41,9 +41,15 @@
 
   const TRAY_LIMIT = 7;
   const OVERLAP_X = 136;
-  const OVERLAP_Y = 156;
+  const OVERLAP_Y = 188;
   const STORAGE_PREFIX = "card-merge-";
   const SUPPORTS_POINTER_EVENTS = "PointerEvent" in window;
+  const CARD_SUITS = Object.freeze([
+    { symbol: "♠", color: "black" },
+    { symbol: "♥", color: "red" },
+    { symbol: "♣", color: "black" },
+    { symbol: "♦", color: "red" },
+  ]);
 
   const elements = {
     board: document.querySelector("#gameBoard"),
@@ -212,11 +218,51 @@
     return CARD_RANKS.find((type) => type.id === typeId);
   }
 
-  function rankMarkup(type) {
+  function getCardSuit(seed) {
+    const hash = [...String(seed)].reduce((total, character) => total + character.charCodeAt(0), 0);
+    return CARD_SUITS[hash % CARD_SUITS.length];
+  }
+
+  function cardFaceMarkup(type, seed) {
     const classes = ["card-rank"];
     if (["J", "Q", "K"].includes(type.id)) classes.push("is-face");
     if (["SMALL_JOKER", "BIG_JOKER"].includes(type.id)) classes.push("is-joker");
-    return `<span class="${classes.join(" ")}" aria-hidden="true">${type.label}</span>`;
+    const isJoker = classes.includes("is-joker");
+
+    if (isJoker) {
+      const jokerClass = type.id === "BIG_JOKER" ? "is-big-joker" : "is-small-joker";
+      return `
+        <span class="playing-card-face is-joker-card ${jokerClass}" aria-hidden="true">
+          <span class="joker-word">JOKER</span>
+          <span class="joker-emblem">✦</span>
+          <span class="${classes.join(" ")}">${type.label}</span>
+        </span>
+      `;
+    }
+
+    const suit = getCardSuit(seed);
+    return `
+      <span class="playing-card-face is-${suit.color}" aria-hidden="true">
+        <span class="card-corner card-corner-top">
+          <b>${type.label}</b><i>${suit.symbol}</i>
+        </span>
+        <span class="card-center">
+          <b class="${classes.join(" ")}">${type.label}</b>
+          <i class="card-suit">${suit.symbol}</i>
+        </span>
+        <span class="card-corner card-corner-bottom">
+          <b>${type.label}</b><i>${suit.symbol}</i>
+        </span>
+      </span>
+    `;
+  }
+
+  function cardBackMarkup() {
+    return `
+      <span class="playing-card-back" aria-hidden="true">
+        <span class="card-back-medallion">✦</span>
+      </span>
+    `;
   }
 
   function renderAll() {
@@ -240,7 +286,7 @@
       button.type = "button";
       button.className = `tile${available ? "" : " is-blocked"}`;
       button.dataset.tileId = tile.id;
-      button.dataset.rank = type.id;
+      if (available) button.dataset.rank = type.id;
       button.style.left = `${tile.x / 10}%`;
       button.style.top = `${tile.y / 10}%`;
       // A selectable tile is logically on top. Giving it hit-test priority keeps
@@ -249,10 +295,10 @@
       button.style.zIndex = String((available ? 1000 : tile.layer * 100) + index);
       button.setAttribute(
         "aria-label",
-        available ? `${type.name}，可以选择` : `${type.name}，被上层方块压住`,
+        available ? `${type.name}，可以选择` : "牌背，被上层扑克牌压住",
       );
       button.setAttribute("aria-disabled", available ? "false" : "true");
-      button.innerHTML = rankMarkup(type);
+      button.innerHTML = available ? cardFaceMarkup(type, tile.id) : cardBackMarkup();
       if (SUPPORTS_POINTER_EVENTS) {
         button.addEventListener("pointerdown", (event) => {
           if (!event.isPrimary || event.button !== 0) return;
@@ -298,7 +344,7 @@
         const tile = document.createElement("div");
         tile.className = `tray-tile${matchingType === item.type ? " is-matching" : ""}`;
         tile.setAttribute("aria-label", type.name);
-        tile.innerHTML = rankMarkup(type);
+        tile.innerHTML = cardFaceMarkup(type, item.id);
         slot.appendChild(tile);
       }
       elements.tray.appendChild(slot);
@@ -314,7 +360,7 @@
       const button = document.createElement("button");
       button.type = "button";
       button.className = "mini-tile";
-      button.innerHTML = rankMarkup(type);
+      button.innerHTML = cardFaceMarkup(type, item.id);
       button.setAttribute("aria-label", `把${type.name}放回收集槽`);
       button.addEventListener("click", () => returnStashedTile(item.id));
       elements.stashSlots.appendChild(button);
@@ -390,7 +436,7 @@
       void button.offsetWidth;
       button.classList.add("is-shaking");
       playBlockedSound();
-      showToast("这张牌还被压着，先拿走上层方块");
+      showToast("这张牌还没翻开，先拿走上层扑克牌");
       scheduleHint(3800);
       return;
     }
@@ -630,7 +676,7 @@
       const button = elements.board.querySelector(`[data-tile-id="${tile.id}"]`);
       if (button) {
         button.classList.add("is-hinting");
-        elements.statusText.textContent = "闪动的方块是个不错的选择";
+        elements.statusText.textContent = "闪动的扑克牌是个不错的选择";
       }
     }, delay);
   }
@@ -647,7 +693,7 @@
     setModal({
       kicker: "欢迎来到",
       title: "王牌叠叠合",
-      description: "点击没有被压住的牌。两张相同点数会合成高一级，并在收集槽中连续进位。",
+      description: "点击翻开的扑克牌，牌背表示仍被压住。相同点数不分花色，可在收集槽中连续进位。",
       illustration: ["2", "2", "3"],
       rules: [
         ["1", "只选最上层"],
@@ -671,7 +717,7 @@
       kicker: "玩法说明",
       title: "同点数，向上合",
       description:
-        "顺序是 2、3、4、5、6、7、8、9、10、J、Q、K、A、小王、大王。两张大王会消除；合成牌留在槽内，并可继续连锁合并。",
+        "牌背暂时不可选；翻开后按 2、3、4、5、6、7、8、9、10、J、Q、K、A、小王、大王升级。花色不影响合并，两张大王会消除。",
       illustration: ["K", "A", "王"],
       rules: [
         ["2+2", "合成 3"],

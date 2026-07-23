@@ -10,7 +10,7 @@
     />
     <title>王牌叠叠合</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff9e8'/%3E%3Cpath d='M18 38c0-14 12-25 29-24-1 17-12 29-26 28' fill='%2379a85b'/%3E%3Cpath d='M18 48c7-13 15-21 28-29' fill='none' stroke='%234b6d3b' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./style.css?v=20260723-2" />
+    <link rel="stylesheet" href="./style.css?v=20260723-3" />
   </head>
   <body>
     <div class="ambient ambient-one" aria-hidden="true"></div>
@@ -84,7 +84,7 @@
       <section class="tray-section" aria-label="收集槽">
         <div class="tray-caption">
           <span>收集槽</span>
-          <small>两张同点数自动升级，可连续合并</small>
+          <small>同点数即可升级，花色不限</small>
         </div>
         <div class="tray" id="tray"></div>
       </section>
@@ -122,7 +122,7 @@
         <p class="modal-kicker" id="modalKicker">欢迎来到</p>
         <h1 id="modalTitle">王牌叠叠合</h1>
         <p class="modal-description" id="modalDescription">
-          点击没有被压住的牌。两张相同点数会合成高一级，并可连续进位。
+          点击翻开的扑克牌，牌背表示仍被压住。相同点数不分花色，可连续进位。
         </p>
         <div class="rules" id="modalRules">
           <div><b>1</b><span>只选最上层</span></div>
@@ -138,7 +138,7 @@
     <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
     <div class="sr-only" id="liveRegion" aria-live="polite"></div>
 
-    <script src="./merge-rules.js?v=20260723-2"></script>
-    <script src="./game.js?v=20260723-2"></script>
+    <script src="./merge-rules.js?v=20260723-3"></script>
+    <script src="./game.js?v=20260723-3"></script>
   </body>
 </html>
