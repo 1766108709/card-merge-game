@@ -327,7 +327,8 @@ button:focus-visible {
 .tile {
   position: absolute;
   display: grid;
-  width: 12.4%;
+  width: auto;
+  height: 15.2%;
   aspect-ratio: 5 / 7;
   padding: 0;
   place-items: center;

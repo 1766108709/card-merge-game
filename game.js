@@ -40,8 +40,8 @@
   ];
 
   const TRAY_LIMIT = 7;
-  const OVERLAP_X = 136;
-  const OVERLAP_Y = 188;
+  const OVERLAP_X = 105;
+  const OVERLAP_Y = 156;
   const STORAGE_PREFIX = "card-merge-";
   const SUPPORTS_POINTER_EVENTS = "PointerEvent" in window;
   const CARD_SUITS = Object.freeze([
