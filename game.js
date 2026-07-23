@@ -43,6 +43,7 @@
   const OVERLAP_X = 136;
   const OVERLAP_Y = 156;
   const STORAGE_PREFIX = "card-merge-";
+  const SUPPORTS_POINTER_EVENTS = "PointerEvent" in window;
 
   const elements = {
     board: document.querySelector("#gameBoard"),
@@ -87,6 +88,7 @@
   let toastTimer = null;
   let primaryAction = null;
   let secondaryAction = null;
+  let lastPointerActivation = { tileId: "", time: 0 };
 
   const savedLevel = Number.parseInt(localStorage.getItem(`${STORAGE_PREFIX}level`) || "0", 10);
 
@@ -241,14 +243,35 @@
       button.dataset.rank = type.id;
       button.style.left = `${tile.x / 10}%`;
       button.style.top = `${tile.y / 10}%`;
-      button.style.zIndex = String(tile.layer * 100 + index);
+      // A selectable tile is logically on top. Giving it hit-test priority keeps
+      // nearby covered tiles from stealing taps when mobile layout rounding makes
+      // their rectangular boxes touch by a pixel or two.
+      button.style.zIndex = String((available ? 1000 : tile.layer * 100) + index);
       button.setAttribute(
         "aria-label",
         available ? `${type.name}，可以选择` : `${type.name}，被上层方块压住`,
       );
       button.setAttribute("aria-disabled", available ? "false" : "true");
       button.innerHTML = rankMarkup(type);
-      button.addEventListener("click", () => selectBoardTile(tile.id, button));
+      if (SUPPORTS_POINTER_EVENTS) {
+        button.addEventListener("pointerdown", (event) => {
+          if (!event.isPrimary || event.button !== 0) return;
+          lastPointerActivation = { tileId: tile.id, time: Date.now() };
+          selectBoardTile(tile.id, button);
+        });
+      }
+      button.addEventListener("click", () => {
+        // Pointer input is handled on press, before a touch WebView can cancel
+        // the click because of hover/active styling. Keep click for keyboards
+        // and as a fallback in browsers without Pointer Events.
+        const isDuplicatePointerClick =
+          SUPPORTS_POINTER_EVENTS &&
+          lastPointerActivation.tileId === tile.id &&
+          Date.now() - lastPointerActivation.time < 600;
+        if (!isDuplicatePointerClick) {
+          selectBoardTile(tile.id, button);
+        }
+      });
       fragment.appendChild(button);
     });
 

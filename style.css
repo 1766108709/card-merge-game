@@ -390,19 +390,29 @@ button:focus-visible {
   color: var(--green-dark);
 }
 
-.tile:not(.is-blocked):hover {
-  z-index: 700 !important;
-  box-shadow:
-    0 5px 0 #d2cbb3,
-    0 13px 20px rgba(65, 83, 54, 0.2);
-  transform: translate(-50%, calc(-50% - 5px)) rotate(-1deg);
-}
-
 .tile:not(.is-blocked):active {
   box-shadow:
     0 2px 0 #d2cbb3,
     0 5px 8px rgba(65, 83, 54, 0.18);
   transform: translate(-50%, calc(-50% + 2px)) scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tile:not(.is-blocked):hover {
+    box-shadow:
+      0 5px 0 #d2cbb3,
+      0 13px 20px rgba(65, 83, 54, 0.2);
+    transform: translate(-50%, calc(-50% - 5px)) rotate(-1deg);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .tile:not(.is-blocked)::after {
+    position: absolute;
+    inset: -7px;
+    content: "";
+    border-radius: 22%;
+  }
 }
 
 .tile.is-blocked {
