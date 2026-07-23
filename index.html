@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e9f4dc" />
+    <meta
+      name="description"
+      content="王牌叠叠合——一款支持连续进位的扑克牌堆叠合成游戏。"
+    />
+    <title>王牌叠叠合</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23fff9e8'/%3E%3Cpath d='M18 38c0-14 12-25 29-24-1 17-12 29-26 28' fill='%2379a85b'/%3E%3Cpath d='M18 48c7-13 15-21 28-29' fill='none' stroke='%234b6d3b' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+
+    <main class="game-shell">
+      <header class="topbar">
+        <div class="brand" aria-label="王牌叠叠合">
+          <span class="brand-leaf brand-card" aria-hidden="true">2</span>
+          <span>
+            <strong>王牌叠叠合</strong>
+            <small>CARD MERGE</small>
+          </span>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="soundButton" type="button" aria-label="关闭声音" title="声音">
+            <span aria-hidden="true">♪</span>
+          </button>
+          <button class="icon-button" id="helpButton" type="button" aria-label="查看玩法" title="玩法">
+            <span aria-hidden="true">?</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="hud" aria-label="游戏状态">
+        <div class="level-copy">
+          <span class="eyebrow" id="levelNumber">第 1 关</span>
+          <strong id="levelTitle">林间晨露</strong>
+        </div>
+        <div class="score-card">
+          <span>得分</span>
+          <strong id="score">0</strong>
+        </div>
+      </section>
+
+      <div class="progress-track" aria-label="关卡进度">
+        <div class="progress-fill" id="progressFill"></div>
+        <span id="progressText">0 / 30</span>
+      </div>
+
+      <section class="board-wrap">
+        <div class="scene-decoration" aria-hidden="true">
+          <i class="cloud cloud-a"></i>
+          <i class="cloud cloud-b"></i>
+          <i class="hill hill-a"></i>
+          <i class="hill hill-b"></i>
+          <i class="flower flower-a">✿</i>
+          <i class="flower flower-b">✿</i>
+        </div>
+
+        <div class="board-status">
+          <span id="statusText">先从最上层开始吧</span>
+          <span class="moves"><i></i><b id="movesCount">0</b> 步</span>
+        </div>
+
+        <div class="game-board" id="gameBoard" role="group" aria-label="堆叠牌面"></div>
+
+        <div class="combo-badge" id="comboBadge" aria-live="polite">
+          <span>连合</span><b id="comboNumber">2</b>
+        </div>
+      </section>
+
+      <section class="stash-panel" id="stashPanel" aria-label="临时篮">
+        <div class="stash-label">
+          <span>临时篮</span>
+          <small>点一下可放回</small>
+        </div>
+        <div class="stash-slots" id="stashSlots"></div>
+      </section>
+
+      <section class="tray-section" aria-label="收集槽">
+        <div class="tray-caption">
+          <span>收集槽</span>
+          <small>两张同点数自动升级，可连续合并</small>
+        </div>
+        <div class="tray" id="tray"></div>
+      </section>
+
+      <section class="tools" aria-label="道具">
+        <button class="tool-button" id="undoButton" type="button">
+          <span class="tool-icon" aria-hidden="true">↶</span>
+          <span class="tool-copy"><b>撤回</b><small>回到上一步</small></span>
+          <em id="undoCount">3</em>
+        </button>
+        <button class="tool-button" id="stashButton" type="button">
+          <span class="tool-icon" aria-hidden="true">⌑</span>
+          <span class="tool-copy"><b>暂存</b><small>移出三张牌</small></span>
+          <em id="stashCount">1</em>
+        </button>
+        <button class="tool-button" id="shuffleButton" type="button">
+          <span class="tool-icon" aria-hidden="true">⤨</span>
+          <span class="tool-copy"><b>洗牌</b><small>重排剩余牌</small></span>
+          <em id="shuffleCount">2</em>
+        </button>
+      </section>
+
+      <footer class="game-footer">
+        <span>从 2 一路合到大王</span>
+        <button id="restartButton" type="button">重新开始</button>
+      </footer>
+    </main>
+
+    <div class="modal-backdrop is-visible" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-card" id="modalCard">
+        <button class="modal-close" id="modalClose" type="button" aria-label="关闭">×</button>
+        <div class="modal-illustration" id="modalIllustration" aria-hidden="true">
+          <span>2</span><span>2</span><span>3</span>
+        </div>
+        <p class="modal-kicker" id="modalKicker">欢迎来到</p>
+        <h1 id="modalTitle">王牌叠叠合</h1>
+        <p class="modal-description" id="modalDescription">
+          点击没有被压住的牌。两张相同点数会合成高一级，并可连续进位。
+        </p>
+        <div class="rules" id="modalRules">
+          <div><b>1</b><span>只选最上层</span></div>
+          <div><b>2</b><span>同点数升级</span></div>
+          <div><b>7</b><span>槽满则失败</span></div>
+        </div>
+        <button class="primary-button" id="modalPrimary" type="button">开始叠叠消</button>
+        <button class="secondary-button" id="modalSecondary" type="button">继续游戏</button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
+    <div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+    <script src="./merge-rules.js"></script>
+    <script src="./game.js"></script>
+  </body>
+</html>
