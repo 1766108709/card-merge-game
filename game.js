@@ -92,6 +92,7 @@
   let audioContext = null;
   let hintTimer = null;
   let toastTimer = null;
+  let comboTimer = null;
   let primaryAction = null;
   let secondaryAction = null;
   let lastPointerActivation = { tileId: "", time: 0 };
@@ -682,11 +683,15 @@
   }
 
   function showCombo(combo) {
+    clearTimeout(comboTimer);
     elements.comboNumber.textContent = String(combo);
     elements.comboBadge.classList.remove("is-showing");
     void elements.comboBadge.offsetWidth;
     elements.comboBadge.classList.add("is-showing");
     elements.liveRegion.textContent = `${combo} 次连续合并`;
+    comboTimer = window.setTimeout(() => {
+      elements.comboBadge.classList.remove("is-showing");
+    }, 850);
   }
 
   function showIntroModal() {

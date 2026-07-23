@@ -665,6 +665,7 @@ button:focus-visible {
   border: 3px solid rgba(255, 255, 255, 0.75);
   border-radius: 999px;
   box-shadow: 0 10px 24px rgba(154, 84, 46, 0.27);
+  pointer-events: none;
   transform: translate(-50%, -50%) rotate(-3deg);
 }
 
